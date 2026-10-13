@@ -1,0 +1,140 @@
+{% load static %}
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f4f7fb">
+  <title>Procesar acuerdo | Gestión documental</title>
+  <link rel="stylesheet" href="{% static 'home/styles.css' %}?v=20261013-4">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="{% url 'home:index' %}" aria-label="Inicio de Gestión documental">
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M7 3.75h6.2L18 8.6v11.65H7a2 2 0 0 1-2-2v-12.5a2 2 0 0 1 2-2Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M13 4v5h5M8.5 13h7M8.5 16.5h7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </span>
+      <span class="brand-copy"><strong>Gestión documental</strong><span>Acuerdos y prácticas</span></span>
+    </a>
+    <span class="topbar-note"><span class="status-dot"></span> Plataforma de gestión</span>
+  </header>
+
+  <main class="page-shell">
+    <section class="hero">
+      <div class="hero-copy">
+        <span class="eyebrow"><span class="eyebrow-line"></span> EXTRACCIÓN INTELIGENTE</span>
+        <h1>Convierte tus acuerdos en datos <span>listos para trabajar.</span></h1>
+        <p>Sube un documento PDF y obtén su información organizada en una hoja de cálculo, sin transcribir campo por campo.</p>
+      </div>
+      <div class="hero-art" aria-hidden="true">
+        <span class="art-orbit orbit-one"></span>
+        <span class="art-orbit orbit-two"></span>
+        <span class="art-paper">
+          <svg viewBox="0 0 72 84" fill="none"><path d="M17 7h25l15 15v51a4 4 0 0 1-4 4H17a4 4 0 0 1-4-4V11a4 4 0 0 1 4-4Z" fill="white"/><path d="M42 7v16h15" fill="#DDEBFF"/><path d="M42 7v16h15M23 39h27M23 49h27M23 59h19" stroke="#4F7BB9" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/><path d="M17 7h25l15 15v51a4 4 0 0 1-4 4H17a4 4 0 0 1-4-4V11a4 4 0 0 1 4-4Z" stroke="#B8D0F1" stroke-width="2"/></svg>
+        </span>
+        <span class="art-badge"><span class="badge-check">✓</span> PDF a Excel</span>
+      </div>
+    </section>
+
+    <section class="workspace" aria-labelledby="upload-heading">
+      <div class="section-heading">
+        <div>
+          <span class="section-kicker">COMIENZA AQUÍ</span>
+          <h2 id="upload-heading">Procesa un documento</h2>
+        </div>
+        <span class="secure-note">
+          <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M10 2.5 4 5v4.2c0 4 2.6 6.8 6 8.3 3.4-1.5 6-4.3 6-8.3V5l-6-2.5Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="m7.5 10 1.7 1.7 3.5-3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Procesamiento seguro
+        </span>
+      </div>
+
+      {% if error %}
+        <div class="alert" role="alert">
+          <span class="alert-icon" aria-hidden="true">!</span>
+          <div><strong>No se pudo procesar el documento</strong><p>{{ error }}</p></div>
+        </div>
+      {% endif %}
+
+      <form class="upload-form" method="post" action="{% url 'home:extract_pdf' %}" enctype="multipart/form-data" data-upload-form data-upload-url="{% url 'home:upload_document' %}" data-analyze-url="{% url 'home:analyze_document' %}">
+        {% csrf_token %}
+        <label class="dropzone" for="pdf" data-dropzone>
+          <input id="pdf" class="file-input" name="pdf" type="file" accept="application/pdf,.pdf" required data-file-input>
+          <span class="upload-icon" aria-hidden="true">
+            <svg viewBox="0 0 28 28" fill="none"><path d="M14 18V5m0 0L9 10m5-5 5 5M5.5 17.5v4A2.5 2.5 0 0 0 8 24h12a2.5 2.5 0 0 0 2.5-2.5v-4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </span>
+          <span class="dropzone-title" data-file-name>Arrastra tu archivo aquí</span>
+          <span class="dropzone-subtitle">o <span class="browse-link">selecciónalo desde tu equipo</span></span>
+          <span class="file-requirements">
+            <span class="file-chip"><span class="pdf-mark">PDF</span> Solo archivos PDF</span>
+            <span class="requirement-divider"></span>
+            <span class="file-chip">Tamaño máximo: 20 MB</span>
+          </span>
+          <span class="selected-file-meta" data-file-info hidden>
+            <span class="metadata-status"><span class="metadata-status-dot"></span><span data-file-status>Archivo seleccionado</span></span>
+            <span data-file-size></span>
+            <span data-page-count></span>
+          </span>
+        </label>
+        <div class="form-actions">
+          <p class="privacy-copy">Tus documentos se procesan para extraer los campos del acuerdo.</p>
+          <button class="primary-button" type="submit">
+              <span data-button-label>Subir y analizar PDF</span>
+            <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M4 10h12m-5-5 5 5-5 5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+      </form>
+    </section>
+
+    <section class="workspace schedule-promo" aria-label="Completar cronograma con plantilla">
+      <div class="section-heading">
+        <div>
+          <span class="section-kicker">PLANTILLA ORIGINAL</span>
+          <h2>Completa un cronograma Excel</h2>
+          <p>Usa tu archivo .xlsx como base. Se escribirán únicamente los valores aprobados, conservando el formato de la plantilla.</p>
+        </div>
+        <a class="primary-button" href="{% url 'home:schedule_page' %}">Usar mi plantilla</a>
+      </div>
+    </section>
+
+    <section class="steps" aria-label="Etapas del proceso" data-stage="1">
+      <div class="step is-current" data-step="1">
+        <span class="step-number">01</span>
+        <div><strong>Subir PDF</strong><p>Selecciona el documento original.</p></div>
+      </div>
+      <span class="step-connector" aria-hidden="true"></span>
+      <div class="step" data-step="2">
+        <span class="step-number">02</span>
+        <div><strong>Analizar</strong><p>Extrae los datos importantes con IA.</p></div>
+      </div>
+      <span class="step-connector" aria-hidden="true"></span>
+      <div class="step" data-step="3">
+        <span class="step-number">03</span>
+        <div><strong>Revisar y editar</strong><p>Corrige y personaliza el resultado.</p></div>
+      </div>
+      <span class="step-connector" aria-hidden="true"></span>
+      <div class="step" data-step="4">
+        <span class="step-number">04</span>
+        <div><strong>Convertir</strong><p>Elige el formato y confirma.</p></div>
+      </div>
+    </section>
+    <div class="upload-progress" data-progress-panel hidden aria-live="polite">
+      <div class="progress-spinner" aria-hidden="true"></div>
+      <div class="progress-copy">
+        <strong data-progress-title>Preparando el documento…</strong>
+        <span data-progress-detail>El PDF se procesa en segundo plano mientras puedes seguir esta página.</span>
+      </div>
+      <span class="progress-percent" data-upload-percent></span>
+    </div>
+    <div class="alert client-alert" role="alert" data-client-error hidden>
+      <span class="alert-icon" aria-hidden="true">!</span>
+      <div><strong>No se pudo completar el análisis</strong><p data-client-error-message></p></div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <span>Gestión documental <span class="footer-dot">·</span> Acuerdos y prácticas</span>
+    <span>Una forma más simple de organizar tu información.</span>
+  </footer>
+  <script src="{% static 'home/upload.js' %}?v=20261013-5" defer></script>
+</body>
+</html>

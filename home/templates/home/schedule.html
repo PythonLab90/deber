@@ -1,0 +1,104 @@
+{% load static %}
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f4f7fb">
+  <title>Completar cronograma | Gestión documental</title>
+  <link rel="stylesheet" href="{% static 'home/styles.css' %}?v=20261013-5">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="{% url 'home:index' %}" aria-label="Volver a Gestión documental">
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M7 3.75h6.2L18 8.6v11.65H7a2 2 0 0 1-2-2v-12.5a2 2 0 0 1 2-2Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="M13 4v5h5M8.5 13h7M8.5 16.5h7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </span>
+      <span class="brand-copy"><strong>Gestión documental</strong><span>Acuerdos y prácticas</span></span>
+    </a>
+    <span class="topbar-note"><span class="status-dot"></span> Plantilla original protegida</span>
+  </header>
+
+  <main class="page-shell schedule-shell" data-schedule-page
+        data-preview-url="{% url 'home:preview_schedule_template' %}"
+        data-analyze-url="{% url 'home:analyze_schedule' %}"
+        data-download-url="{% url 'home:download_completed_schedule' %}">
+    <a class="back-link" href="{% url 'home:index' %}">← Volver al inicio</a>
+    <section class="workspace">
+      <header class="section-heading">
+        <div>
+          <span class="section-kicker">CRONOGRAMA CON PLANTILLA</span>
+          <h1>Completa tu Excel sin cambiar su diseño.</h1>
+          <p>Sube el documento fuente y tu cronograma .xlsx. Revisa cada propuesta antes de aplicarla.</p>
+        </div>
+      </header>
+
+      <div class="schedule-preserve-note">
+        La aplicación trabaja sobre una copia del Excel original y solo escribe los valores que confirmes en celdas vacías. No reconstruye la tabla ni cambia intencionalmente formatos, hojas, combinaciones o fórmulas.
+      </div>
+
+      <form class="schedule-upload-form" data-schedule-form enctype="multipart/form-data">
+        {% csrf_token %}
+        <label class="schedule-file-card" for="schedule-pdf">
+          <span class="section-kicker">1 · DOCUMENTO FUENTE</span>
+          <strong>Selecciona el PDF</strong>
+          <span>Actividades, objetivos y fechas que se usarán como fuente.</span>
+          <input id="schedule-pdf" type="file" name="pdf" accept=".pdf,application/pdf" required data-schedule-pdf>
+        </label>
+        <label class="schedule-file-card" for="schedule-template">
+          <span class="section-kicker">2 · TU PLANTILLA</span>
+          <strong>Selecciona el cronograma Excel</strong>
+          <span>Se admiten libros .xlsx; las hojas y estructura existentes se conservan.</span>
+          <input id="schedule-template" type="file" name="template" accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" required data-schedule-template>
+        </label>
+        <div class="schedule-actions">
+          <button class="primary-button" type="submit" data-schedule-analyze>Analizar y preparar vista previa</button>
+          <span class="schedule-status" data-schedule-status aria-live="polite"></span>
+        </div>
+      </form>
+
+      <section class="schedule-template-preview" data-template-preview hidden aria-labelledby="template-preview-title">
+        <div class="schedule-template-preview-heading">
+          <div>
+            <span class="section-kicker">PLANTILLA · <span data-preview-filename></span></span>
+            <h2 id="template-preview-title">Vista previa del Excel</h2>
+            <p data-template-preview-description>Revisa la plantilla original. Las sugerencias del PDF se marcarán aquí después del análisis.</p>
+          </div>
+          <label class="schedule-sheet-picker" data-sheet-picker hidden>
+            <span>Hoja</span>
+            <select data-preview-sheet aria-label="Seleccionar hoja de la plantilla"></select>
+          </label>
+        </div>
+        <div class="schedule-template-grid-wrap" data-template-grid tabindex="0" aria-label="Vista previa de la hoja Excel"></div>
+        <p class="schedule-template-preview-footnote">Vista de solo lectura · se muestran hasta 40 filas y 16 columnas de la hoja seleccionada.</p>
+      </section>
+
+      <div class="alert client-alert" role="alert" data-schedule-error hidden>
+        <span class="alert-icon" aria-hidden="true">!</span>
+        <div><strong>No se pudo completar el análisis</strong><p data-schedule-error-text></p></div>
+      </div>
+
+      <section class="schedule-review" data-schedule-review hidden aria-labelledby="schedule-review-title">
+        <div class="schedule-review-heading">
+          <div>
+            <span class="section-kicker">VISTA PREVIA · <span data-template-name></span></span>
+            <h2 id="schedule-review-title">Revisa las celdas que cambiarán</h2>
+            <p data-schedule-summary></p>
+          </div>
+          <span class="schedule-change-count" data-change-count></span>
+        </div>
+        <p class="schedule-preview-note">La vista previa muestra únicamente los cambios propuestos; las demás celdas y el formato del archivo original no se regeneran.</p>
+        <div class="schedule-change-list" data-schedule-changes></div>
+        <div class="schedule-extra-notes" data-schedule-notes></div>
+        <button class="primary-button" type="button" data-schedule-download disabled>Confirmar y descargar Excel</button>
+      </section>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <span>Gestión documental <span class="footer-dot">·</span> Acuerdos y prácticas</span>
+    <span>La descarga se genera solo cuando confirmas los cambios.</span>
+  </footer>
+  <script src="{% static 'home/schedule.js' %}?v=20261013-2" defer></script>
+</body>
+</html>
