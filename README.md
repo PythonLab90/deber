@@ -42,7 +42,7 @@ Crea un servicio web conectado a este repositorio y configura:
 - **Build command:** `pip install -r requirements.txt`
 - **Start command:** `gunicorn pdf_excel.wsgi:application`
 
-En **Environment Variables**, define `DJANGO_DEBUG=0`, `DJANGO_SECRET_KEY` con una clave secreta nueva, `DJANGO_ALLOWED_HOSTS` con el dominio `onrender.com` de tu servicio y `GROQ_API_KEY` con una clave nueva de Groq. No subas `.env` ni claves al repositorio.
+En **Environment Variables**, define `DJANGO_DEBUG=0`, `DJANGO_SECRET_KEY` con una clave secreta nueva y `GROQ_API_KEY` con una clave nueva de Groq. La aplicación permite automáticamente el dominio `onrender.com` asignado por Render. Configura `DJANGO_ALLOWED_HOSTS` solo si necesitas agregar dominios propios adicionales, separados por comas. No subas `.env` ni claves al repositorio.
 
 La aplicación necesita también el archivo de Excel de referencia para la función de extracción a Excel. Como los archivos `.xlsx` están excluidos de Git, configura `TRAINING_EXCEL_PATH` a una ruta disponible en el servicio o añade el archivo de referencia al despliegue por un medio privado.
 
