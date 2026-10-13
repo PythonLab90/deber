@@ -32,12 +32,12 @@ class PdfExcelTests(TestCase):
         response = self.client.get(reverse("home:index"))
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Convierte tus acuerdos en datos")
-        self.assertContains(response, "home/styles.css")
+        self.assertRegex(response.content.decode(), r"home/styles\.[a-f0-9]+\.css")
         self.assertContains(response, "data-dropzone")
         self.assertContains(response, "Subir PDF")
-        self.assertContains(response, "home/upload.js")
+        self.assertRegex(response.content.decode(), r"home/upload\.[a-f0-9]+\.js")
         self.assertContains(response, "v=20261013-4")
-        self.assertContains(response, "upload.js?v=20261013-5")
+        self.assertRegex(response.content.decode(), r"upload\.[a-f0-9]+\.js\?v=20261013-5")
         self.assertContains(response, "Completa un cronograma Excel")
 
     def test_upload_analyze_review_workflow(self):

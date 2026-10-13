@@ -39,7 +39,7 @@ python manage.py runserver
 Crea un servicio web conectado a este repositorio y configura:
 
 - **Runtime:** Python 3
-- **Build command:** `pip install -r requirements.txt`
+- **Build command:** `pip install -r requirements.txt && python manage.py collectstatic --noinput`
 - **Start command:** `gunicorn pdf_excel.wsgi:application`
 
 En **Environment Variables**, define `DJANGO_DEBUG=0`, `DJANGO_SECRET_KEY` con una clave secreta nueva y `GROQ_API_KEY` con una clave nueva de Groq. La aplicación permite automáticamente el dominio `onrender.com` asignado por Render. Configura `DJANGO_ALLOWED_HOSTS` solo si necesitas agregar dominios propios adicionales, separados por comas. No subas `.env` ni claves al repositorio.
