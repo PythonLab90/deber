@@ -547,15 +547,18 @@ def upload_document(request: HttpRequest) -> JsonResponse:
     job_id = uuid.uuid4().hex
     job_directory = Path(settings.PDF_JOB_ROOT) / job_id
     pdf_path = job_directory / "original.pdf"
+    stage = "guardar"
     try:
         job_directory.mkdir(parents=True, exist_ok=False)
         with pdf_path.open("wb") as destination:
             for chunk in uploaded_file.chunks():
                 destination.write(chunk)
+        stage = "validar PDF"
         with pdf_path.open("rb") as source:
             if source.read(len(PDF_SIGNATURE)) != PDF_SIGNATURE:
                 raise ValueError("El archivo seleccionado no contiene un PDF válido.")
 
+        stage = "extraer texto y OCR"
         pages = extract_pages_from_pdf(pdf_path)
         if len(pages) > settings.MAX_PDF_PAGES:
             raise ValueError(
@@ -573,13 +576,14 @@ def upload_document(request: HttpRequest) -> JsonResponse:
             json.dumps(pages, ensure_ascii=False),
             encoding="utf-8",
         )
+        stage = "detectar tablas"
         detected_tables = extract_pdf_tables(pdf_path)
         (job_directory / "detected_tables.json").write_text(
             json.dumps(detected_tables, ensure_ascii=False),
             encoding="utf-8",
         )
     except (OSError, RuntimeError, ValueError) as exc:
-        logger.warning("No se pudo preparar el PDF: %s", exc)
+        logger.exception("No se pudo preparar el PDF durante la etapa %s.", stage)
         if job_directory.exists():
             _remove_job_directory(job_directory)
         return _json_error(str(exc))

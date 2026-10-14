@@ -99,7 +99,7 @@
       const xhr = new XMLHttpRequest();
       xhr.open("POST", form.dataset.uploadUrl);
       xhr.setRequestHeader("X-CSRFToken", csrfToken());
-      xhr.responseType = "json";
+      xhr.responseType = "text";
       xhr.upload.addEventListener("progress", (event) => {
         if (!event.lengthComputable) {
           return;
@@ -110,12 +110,31 @@
         progressDetail.textContent = "El PDF se transfiere de forma segura.";
       });
       xhr.addEventListener("load", () => {
-        const response = xhr.response;
+        let response = null;
+        try {
+          response = JSON.parse(xhr.responseText);
+        } catch (error) {
+          if (!(error instanceof SyntaxError)) {
+            reject(error);
+            return;
+          }
+          response = null;
+        }
         if (xhr.status >= 200 && xhr.status < 300 && response) {
           resolve(response);
           return;
         }
-        reject(new Error(response?.error ?? "No se pudo subir el PDF. Inténtalo de nuevo."));
+        const message = response?.error
+          ?? (xhr.status === 413
+            ? "El servidor rechazó el archivo por su tamaño. El PDF debe pesar menos de 20 MB."
+            : xhr.status === 502 || xhr.status === 503 || xhr.status === 504
+              ? "El servidor de Render no pudo terminar de procesar el PDF. Prueba con un archivo más pequeño o vuelve a intentarlo."
+              : xhr.status >= 500
+                ? `El servidor tuvo un error al procesar el PDF (HTTP ${xhr.status}). Revisa los registros de Render.`
+                : xhr.status === 400
+                  ? "El servidor rechazó la subida. Verifica que el PDF sea válido y no supere 20 MB."
+                  : `No se pudo preparar el PDF (HTTP ${xhr.status || "sin respuesta"}). Inténtalo de nuevo.`);
+        reject(new Error(message));
       });
       xhr.addEventListener("error", () =>
         reject(new Error("No se pudo conectar con el servidor. Comprueba tu conexión e inténtalo de nuevo.")),
